@@ -1,10 +1,9 @@
-#define _CRT_SECURE_NO_WARNINGS
 #include <iostream>
 #include <vector>
 #include <string>
 #include <conio.h>
 #include <iomanip>
-#include <algorithm>
+#include<fstream>
 
 using namespace std;
 
@@ -77,6 +76,7 @@ public:
 		Print(stdList);
 		string m;
 		string n;
+		cin.ignore();
 		do
 		{
 			cout << "Enter artist song:\n";
@@ -103,7 +103,6 @@ public:
 
 		} while (m[0] != '0' || n[0] != '0');
 		Print(stdList);
-		
 	}
 
 	void del()
@@ -148,52 +147,49 @@ public:
 	void ListSTD()
 	{
 		string a;
-		/*vector<string> stdList(10);*/
 		a = "Egor Kreed - We Gotta Get Love";
 		stdList.push_back(a);
-		a = "Skriptonit, 104 - Ты это серъезно?";
+		a = "Skriptonit, 104 - ti eto serezno?";
 		stdList.push_back(a);
-		a = "Три Дня Дождя - Слабый человек";
+		a = "Tri dnya dojdya - slabiy chelovek";
 		stdList.push_back(a);
 		a = "HADES, Mingue - Drugs";
 		stdList.push_back(a);
-		a = "Bakhtin - Молодой";
+		a = "Bakhtin - molodoy";
 		stdList.push_back(a);
-		a = "10AGE - Мандариновые горы";
+		a = "10AGE - Mandarinovie gory";
 		stdList.push_back(a);
-		a = "Mnogocnaal - Антигерой";
+		a = "Mnogocnaal - Antigeroi";
 		stdList.push_back(a);
-		a = "Clonnex,  Вышел покурить - Беспредел Remix";
+		a = "Clonnex,  vishel pokurit - Bespredel Remix";
 		stdList.push_back(a);
-		a = "miroshland, Aikko - Все сказал";
+		a = "Miroshland, Aikko - Vse skazal";
 		stdList.push_back(a);
-		a = "STED.D - ФИНИТА";
+		a = "STED.D - FINITA";
 		stdList.push_back(a);
 
 	}
 
-	void search()
+	void search(vector <string> List)
 	{
 		string a;
 		cout << "Enter search name:\n";
+		cin.ignore();
 		getline(cin, a);
-		
-
-		/*vector<string>::iterator it = find(stdList.begin(), stdList.end(), a);*/
-		
-		vector<string>::iterator it = find(stdList.begin(), stdList.end(), a);
+		bool b=false;
+		for (int i = 0; i < List.size(); i++)
+		{
 			
-			if (it == stdList.end())
+			if (!List[i].find(a))
 			{
-				cout << "Ne alo\n";
+				cout <<i+1<<"\t" << List[i] << "\n";
+				b = true;
 			}
-			else
-			{
-				cout << "Alo\n";
-			}
-			
-		
-		
+		}
+		if (b == false)
+		{
+			cout << "Ne nashlos'\n";
+		}
 	}
 
 	void Print(vector <string> List)
@@ -216,12 +212,64 @@ public:
 		{
 			plusList.push_back(stdList[i]);
 		}
-		
 	}
 
 	~Playlist()
 	{
 
+	}
+
+	void WriteSave(vector <string> List)
+	{
+		ofstream outfile("PlayList2.txt", ios::app);
+		for (int i = 0; i < List.size(); i++)
+		{
+			outfile << List[i]<<"\n";
+		}
+		cout << "\n";
+		outfile.close();
+	}
+
+	void Write(vector <string> List)
+	{
+		ofstream outfile("PlayList2.txt");
+		for (int i = 0; i < List.size(); i++)
+		{
+			outfile << List[i] << "\n";
+		}
+		cout << "\n";
+		outfile.close();
+	}
+
+	void Read()
+	{
+		string s;
+		ifstream outfile("PlayList2.txt");
+		if (outfile.is_open())
+		{
+			int i = 0;
+			while (!outfile.eof())
+			{
+				getline(outfile, s);
+				
+				if (s.size() > 0) // ubiraem lishniy \n pri schitivanii
+				{
+					plusList.resize(i + 1);
+					plusList[i] = s;
+					i++;
+				}
+			}
+		}
+		outfile.close();
+		cout << "\n";
+	}
+
+	void ReadPrint()
+	{
+		for (int i = 0; i < plusList.size(); i++)
+		{
+			cout << i + 1<<": " << plusList[i] << "\n";
+		}
 	}
 
 };
@@ -230,22 +278,29 @@ int main()
 {
 	setlocale(LC_ALL, "ru");
 	Playlist PL;
-	
-	char vvod;
+	int vvod;
 	do
 	{
+		system("cls");
 		cout << "1 - Create Playlist:\n";
 		cout << "2 - std PlayList\n";
 		cout << "3 - List+List\n";
 		cout << "4 - Del MyPlaylist song\n";
 		cout << "5 - Del stdPlaylist song\n";
 		cout << "6 - Del List+List song\n";
-		cout << "7 - Add song\n";
-		cout << "Exit - Esc\n";
-		vvod = _getch();
+		cout << "7 - Add to std\n";
+		cout << "8 - Search\n";
+		cout << "9 - WriteSave\n";
+		cout << "10 - Write Create List\n";
+		cout << "11 - Read plus list\n";
+		cout << "12 - PrintMy\n";
+		cout << "13 - Print+\n";
+		cout << "14 - PrintSTD\n";
+		cout << "Exit - Enter 0\n";
+		cin >> vvod;
 		switch (vvod)
 		{
-		case'1':
+		case 1:
 		{
 			PL.createList();
 			cout << "\n";
@@ -255,15 +310,14 @@ int main()
 			break;
 
 		}
-		case'2':
+		case 2:
 		{
-			
 			PL.Print(PL.getstdList());
 			cout << "\n";
 			system("pause");
 			break;
 		}
-		case'3':
+		case 3:
 		{
 			PL.uniteList(PL.getUlist(), PL.getstdList());
 			cout << "\n";
@@ -273,51 +327,85 @@ int main()
 			break;
 
 		}
-		case'4':
+		case 4:
 		{
 			int a;
 			PL.del();
 			cout << "\n";
 			system("pause");
 			break;
-
 		}
-		case'5':
+		case 5:
 		{
 			PL.del2();
 			cout << "\n";
 			system("pause");
 			break;
-
 		}
-		case'6':
+		case 6:
 		{
 			PL.del3();
 			cout << "\n";
 			system("pause");
 			break;
 		}
-		case'7':
+		case 7:
 		{
-
 			PL.add();
 			cout << "\n";
 			system("pause");
 			break;
 		}
-		case'8':
+		case 8:
 		{
-
 			PL.search(PL.getstdList());
 			cout << "\n";
 			system("pause");
 			break;
 		}
+		case 9:
+		{
+			PL.WriteSave(PL.getplusList());
+			cout << "\n";
+			system("pause");
+			break;
 		}
-
-
-	
-	} while (vvod != 27);
-
-
+		case 10:
+		{
+			PL.Write(PL.getUlist());
+			cout << "\n";
+			system("pause");
+			break;
+		}
+		case 11:
+		{
+			PL.Read();
+			PL.ReadPrint();
+			cout << "\n";
+			system("pause");
+			break;
+		}
+		case 12:
+		{
+			PL.Print(PL.getUlist());
+			cout << "\n";
+			system("pause");
+			break;
+		}
+		case 13:
+		{
+			PL.Print(PL.getplusList());
+			cout << "\n";
+			system("pause");
+			break;
+		}
+		case 14:
+		{
+			PL.Print(PL.getstdList());
+			cout << "\n";
+			system("pause");
+			break;
+		}
+		}
+	} while (vvod != 0);
 }
